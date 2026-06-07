@@ -1,0 +1,25 @@
+{
+  "name": "叫菜小幫手",
+  "short_name": "叫菜",
+  "description": "吉利蔬菓叫菜小幫手",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#202124",
+  "theme_color": "#202124",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
