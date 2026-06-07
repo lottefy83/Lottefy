@@ -1,4 +1,4 @@
-const CACHE_NAME = 'order-helper-v2.0.0';
+const CACHE_NAME = 'order-helper-v2.0.1-safe-area';
 const FILES_TO_CACHE = [
   './',
   './index.html',
