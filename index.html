@@ -468,6 +468,34 @@ html {
   }
 }
 
+
+/* =========================================
+   iPhone PWA 安全區修正：避免上方狀態列遮住搜尋列
+   只補 safe-area 間距，不調整其他功能
+========================================= */
+@media (max-width: 850px) {
+  .app {
+    min-height: 100dvh;
+  }
+
+  .app-tab.active {
+    padding-top: calc(14px + env(safe-area-inset-top));
+  }
+
+  .mobile-header {
+    margin-top: 0;
+  }
+
+  .bottom-nav {
+    height: calc(60px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .floating-checkout {
+    bottom: calc(60px + env(safe-area-inset-bottom));
+  }
+}
+
 </style>
 </head>
 <body>
