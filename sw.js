@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jili-order-helper-v1.0.1-pwa-sync-pairs-cat-icon-v2';
+const CACHE_NAME = 'order-helper-v2.0.0';
 const FILES_TO_CACHE = [
   './',
   './index.html',
