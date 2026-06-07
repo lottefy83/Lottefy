@@ -1,7 +1,7 @@
 {
-  "name": "叫菜小幫手",
-  "short_name": "叫菜",
-  "description": "吉利蔬菓叫菜小幫手",
+  "name": "叫菜快手",
+  "short_name": "叫菜快手",
+  "description": "吉利蔬菓叫菜快手",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
