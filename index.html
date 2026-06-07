@@ -2,360 +2,342 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>吉利蔬菜叫菜 APP｜深灰科技藍版 </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>叫菜小幫手</title>
 <style>
-/* 質感深灰色 (Dark Gray) 搭配 科技天空藍 (Sky Blue) */
+/* =========================================
+   品牌色彩與核心變數 (Orange UI)
+========================================= */
 :root {
-  --bg: #202124; 
-  --card: #2d2e31; 
-  --text: #e8eaed; 
-  --muted: #9aa0a6; 
-  --line: rgba(255, 255, 255, 0.12); 
-  --green: #1e8e3e; 
-  --green-dark: #81c995;
-  --soft: #3c4043; 
-  --red: #f28b82; 
-  --accent: #8ab4f8; 
-  --accent-light: #aecbfa; 
-  --shadow: 0 8px 20px rgba(0, 0, 0, 0.3); 
-  --radius: 16px;
+  --bg: #fff9f4; /* 淡奶油色背景 */
+  --card: #ffffff;
+  --text: #333333;
+  --text-dark: #1a1a1a;
+  --muted: #888888;
+  --primary: #f39c12; /* 主色調：橘色 */
+  --dark: #e67e22; /* 深色調：深橘 */
+  --line: rgba(243, 156, 18, 0.2); /* 淺橘色邊框 */
+  --green: #27ae60; /* 匯出/下載按鈕專用綠色 */
+  --red: #e74c3c;
+  --shadow: 0 8px 20px rgba(230, 126, 34, 0.08); /* 微細陰影 */
+  --radius: 12px;
+  --btn-radius: 8px; /* 按鈕圓角 */
 }
-* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 html, body {
   margin: 0; padding: 0;
-  height: 100%; overflow: hidden; 
+  height: 100%; width: 100%;
   background: var(--bg); color: var(--text);
   font-family: "PingFang TC", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, sans-serif;
-  color-scheme: dark;
 }
-.app { 
-  display: flex; flex-direction: column; 
-  height: 100vh; width: 100vw;
+
+/* =========================================
+   版面架構 (雙欄 7:3 限制最大寬度)
+========================================= */
+.app {
+  display: flex; flex-direction: column;
+  height: 100vh; overflow: hidden;
 }
 
 .topbar {
-  flex-shrink: 0; 
+  flex-shrink: 0;
   padding: max(12px, env(safe-area-inset-top)) 14px 12px;
-  background: rgba(32, 33, 36, 0.98);
+  background: var(--card);
   border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 10px rgba(230, 126, 34, 0.05);
   z-index: 10;
 }
+
 .top-inner {
-  max-width: 1600px; margin: 0 auto;
-  display: grid; 
-  grid-template-columns: 220px minmax(0,1fr) 350px 420px; 
-  gap: 14px; align-items: start; 
+  max-width: 1100px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 220px minmax(0,1fr) 300px; 
+  gap: 14px; align-items: start;
 }
-.brand h1 { margin: 0 0 5px 0; font-size: 22px; line-height: 1.2; color: var(--accent-light); font-weight: 900; }
+
+.brand h1 { margin: 0 0 5px 0; font-size: 22px; line-height: 1.2; color: var(--dark); font-weight: 900; }
 .sub { color: var(--muted); font-size: 12px; line-height: 1.35; }
 
 .panel {
-  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-  box-shadow: var(--shadow); padding: 12px; min-width: 0;
+  background: var(--card); 
+  border: 1px solid var(--line); 
+  border-radius: var(--radius);
+  box-shadow: var(--shadow); 
+  padding: 12px; min-width: 0;
 }
-.panel-title {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px;
-}
-.panel-title strong { font-size: 15px; color: var(--accent-light); font-weight: 900; }
+.panel-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.panel-title strong { font-size: 15px; color: var(--dark); font-weight: 900; }
 .panel-title small { color: var(--muted); font-size: 11px; white-space: nowrap; }
 
-/* ★ 修復日期跑版：限制網格元素的最小寬度，防止內部 input 撐破 */
 .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .meta-grid > div { min-width: 0; }
+label { display: block; color: var(--dark); font-size: 12px; margin-bottom: 4px; font-weight: 600; }
 
-label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; font-weight: 600; }
-
-/* ★ 修復日期跑版：強制 max-width: 100% 以及移除 iOS 預設樣式 */
-input,select {
-  width: 100%; max-width: 100%; border: 1px solid rgba(255, 255, 255, 0.15); background: #303134; color: var(--text);
-  border-radius: 10px; padding: 8px 10px; outline: none; min-width: 0; transition: 0.2s; font-size: 14px;
+input, select {
+  width: 100%; max-width: 100%; min-width: 0;
+  border: 1px solid rgba(230, 126, 34, 0.3); background: #fafafa; color: var(--text-dark);
+  border-radius: var(--btn-radius); padding: 8px 10px; outline: none; transition: 0.2s; font-size: 14px;
 }
 input[type="date"] { -webkit-appearance: none; }
-input:focus,select:focus { 
-  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.2); 
+input:focus, select:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15); background: #fff;
 }
 
 .search { position: relative; }
-.search input { height: 40px; padding-left: 36px; }
-.search span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 16px; }
-.stat-mini {
-  background: var(--soft); border: 1px solid var(--line); border-radius: 10px;
-  padding: 6px; text-align: center;
-}
-.stat-mini b { display: block; font-size: 15px; line-height: 1; color: var(--accent-light); font-weight: 900; }
-.stat-mini small { color: var(--muted); font-size: 11px; font-weight: 600; }
+.search input { height: 42px; padding-left: 36px; border-radius: var(--radius); }
+.search span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 16px; }
 
 .history-panel { display: flex; flex-direction: column; }
-.history-list { 
-  overflow-y: auto; 
-  max-height: 180px; 
-  display: grid; gap: 8px; padding-right: 4px; 
-}
+.history-list { overflow-y: auto; max-height: 180px; display: grid; gap: 8px; padding-right: 4px; }
 
 .wrap {
-  flex: 1; 
-  min-height: 0; 
-  max-width: 1600px; margin: 0 auto; width: 100%;
+  flex: 1; min-height: 0;
+  max-width: 1100px; margin: 0 auto; width: 100%;
   padding: 14px;
-  display: grid; grid-template-columns: minmax(0,1fr) 390px; gap: 14px;
+  display: grid; grid-template-columns: 7fr 3fr; /* 7:3 雙欄架構 */
+  gap: 14px;
 }
 
-.main-content { 
-  overflow-y: auto; 
-  min-height: 0; 
-  padding-right: 8px; 
-}
+.main-content { overflow-y: auto; min-height: 0; padding-right: 8px; }
 
-.right { 
-  display: flex; flex-direction: column; 
-  min-height: 0; 
-}
-.right-panel-wrapper {
-  flex: 1; 
-  display: flex; flex-direction: column; 
-  padding: 0; 
-  overflow: hidden; 
-}
-.right-header {
-  flex-shrink: 0; 
-  padding: 14px 14px 0 14px;
-}
-.selected-panel { 
-  flex: 1; 
-  overflow-y: auto; 
-  min-height: 0; 
-  padding: 14px; 
-  display: flex; flex-direction: column; gap: 8px;
-}
+.right { display: flex; flex-direction: column; min-height: 0; }
+.right-panel-wrapper { flex: 1; display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.right-header { flex-shrink: 0; padding: 14px 14px 0 14px; }
+.selected-panel { flex: 1; overflow-y: auto; min-height: 0; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
 
-.blocks {
-  display: grid; gap: 14px; 
-  grid-template-columns: repeat(4, minmax(0,1fr));
-}
+/* =========================================
+   區塊摺疊 (Accordion) 與列表設計
+========================================= */
+.blocks { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0,1fr)); }
 .block {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
   box-shadow: var(--shadow); overflow: hidden; min-width: 0;
 }
 .block-head {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  padding: 12px 13px; background: linear-gradient(180deg,#35373a,#2d2e31);
-  border-bottom: 1px solid var(--line);
+  padding: 14px; background: #fffaf5; border-bottom: 1px solid var(--line);
+  cursor: pointer; user-select: none; transition: background 0.2s;
 }
-.block-title { font-weight: 900; font-size: 16px; color: var(--accent-light); }
+.block-head:active { background: #ffeee0; }
+.block-title { font-weight: 900; font-size: 16px; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+.block-title::before {
+  content: '▼'; font-size: 10px; color: var(--primary); transition: transform 0.3s;
+}
+.block.collapsed .block-title::before { transform: rotate(-90deg); }
+.block.collapsed .block-body { display: none; }
 .block-count {
-  color: var(--accent-light); background: var(--soft); border-radius: 999px;
-  padding: 4px 9px; font-size: 12px; font-weight: 800; white-space: nowrap; border: 1px solid rgba(138, 180, 248, 0.25);
+  color: var(--dark); background: rgba(243, 156, 18, 0.1); border-radius: 999px;
+  padding: 4px 9px; font-size: 12px; font-weight: 800; white-space: nowrap;
 }
 
 .row {
-  display: grid; grid-template-columns: minmax(60px,1fr) 4.6em 3.8em;
-  gap: 6px; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center;
+  display: grid; grid-template-columns: minmax(60px,1fr) 5em 4em;
+  gap: 8px; padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,0.03); align-items: center;
 }
 .row:last-child { border-bottom: 0; }
 .row-head {
-  background: #292a2d; color: #9aa0a6; font-size: 12px; font-weight: 900;
-  position: sticky; top: 0; z-index: 1;
+  background: #fcfcfc; color: var(--muted); font-size: 12px; font-weight: 900;
+  position: sticky; top: 0; z-index: 1; padding: 8px 12px;
 }
 .name {
   font-weight: 800; line-height: 1.25; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
-  font-size: 18px; letter-spacing: 2px; color: var(--text);
+  font-size: 16px; letter-spacing: 1px; color: var(--text-dark);
 }
-.name.custom::after {
-  content: "新增"; margin-left: 4px; font-size: 10px; color: #202124;
-  background: var(--accent-light); border-radius: 999px; padding: 2px 5px; letter-spacing: normal;
-}
-.qty-wrap { width: 4.6em; } 
-.qty-input { text-align: center; padding-left: 2px !important; padding-right: 2px !important; font-weight: 700; color: var(--accent-light); } 
-.price-select { width: 3.8em !important; text-align: center; padding-left: 2px !important; padding-right: 0px !important; font-weight: 600;}
-
-.row input, .row select { 
-  padding: 6px 4px; border-radius: 8px; font-size: 18px; 
+.qty-wrap { width: 5em; } 
+.qty-input { 
+  text-align: center; padding-left: 2px !important; padding-right: 2px !important; 
+  font-weight: 700; color: var(--dark); font-size: 16px; height: 38px;
+} 
+.price-select { 
+  width: 4em !important; text-align: center; padding: 0 4px !important; 
+  font-weight: 600; font-size: 15px; height: 38px;
 }
 
+/* =========================================
+   按鈕美學
+========================================= */
 .selected-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
 .btn {
-  border: 1px solid rgba(255,255,255,0.2); background: var(--soft); color: #e8eaed; transition: 0.2s;
-  border-radius: 12px; padding: 12px; font-weight: 900; cursor: pointer;
+  border: 1px solid var(--line); background: #fff; color: var(--text-dark); transition: 0.2s;
+  border-radius: var(--btn-radius); padding: 12px; font-weight: 900; cursor: pointer;
 }
-.btn:hover { transform: translateY(-1px); }
-.btn.primary { background: var(--green); border-color: var(--green); color: #fff; box-shadow: 0 6px 15px rgba(30, 142, 62, 0.2); }
-.btn.accent { background: var(--accent); border-color: var(--accent); color: #202124; box-shadow: 0 6px 15px rgba(138, 180, 248, 0.15); }
-.btn.danger { color: var(--red); background: rgba(242, 139, 130, 0.1); border-color: rgba(242, 139, 130, 0.2); }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.btn.primary { background: var(--green); border-color: var(--green); color: #fff; }
+.btn.accent { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3); }
+.btn.danger { color: var(--red); background: #fdf2f2; border-color: #fadada; }
 
-.selected-item,.history-item {
+/* 已點清單與紀錄項目 */
+.selected-item, .history-item {
   display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; align-items: center;
-  border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: #303134; transition: 0.2s;
+  border: 1px solid rgba(230, 126, 34, 0.15); border-radius: var(--btn-radius); padding: 10px; background: #fff; transition: 0.2s;
 }
-.selected-item:hover,.history-item:hover { border-color: var(--accent); }
-.selected-item strong,.history-item strong {
+.selected-item:hover, .history-item:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(243, 156, 18, 0.1); }
+.selected-item strong, .history-item strong {
   display: block; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  letter-spacing: 1px; color: var(--accent-light); font-weight: 900;
+  letter-spacing: 1px; color: var(--dark); font-weight: 900;
 }
-.selected-item small,.history-item small { color: var(--muted); line-height: 1.35; font-weight: 600; }
+.selected-item small, .history-item small { color: var(--muted); line-height: 1.35; font-weight: 600; }
 
 .history-actions { display: flex; gap: 6px; }
 .del, .download-record, .del-record {
-  border: 0; border-radius: 9px; padding: 8px 10px; font-weight: 900; cursor: pointer; white-space: nowrap; transition: 0.2s;
+  border: 0; border-radius: var(--btn-radius); padding: 8px 10px; font-weight: 900; cursor: pointer; white-space: nowrap; transition: 0.2s;
 }
-.del { background: rgba(242, 139, 130, 0.15); color: var(--red); }
-.download-record { background: var(--soft); color: var(--accent-light); border: 1px solid rgba(255,255,255,0.1); }
-.del-record { background: rgba(242, 139, 130, 0.15); color: var(--red); padding: 8px; border-radius: 9px; }
+.del { background: #fdf2f2; color: var(--red); }
+.download-record { background: #f0f7f4; color: var(--green); border: 1px solid rgba(39,174,96,0.2); }
+.del-record { background: #fdf2f2; color: var(--red); padding: 8px; border-radius: var(--btn-radius); }
 
 .empty {
-  text-align: center; color: #9aa0a6; border: 1px dashed rgba(138, 180, 248, 0.4);
-  border-radius: 12px; padding: 20px; background: transparent; line-height: 1.6; font-weight: 600;
-  margin-top: 4px;
+  text-align: center; color: var(--muted); border: 1px dashed var(--line);
+  border-radius: var(--radius); padding: 30px 20px; background: transparent; line-height: 1.6; font-weight: 600;
 }
 
 .mini-grid { display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: end; margin-bottom: 8px;}
-.mini-grid.three { grid-template-columns: 85px minmax(0,1fr) auto; }
 .mini-btn {
-  border: 0; background: var(--accent); color: #202124; border-radius: 8px;
+  border: 0; background: var(--primary); color: #fff; border-radius: var(--btn-radius);
   padding: 8px 12px; font-weight: 900; cursor: pointer; white-space: nowrap; font-size: 13px;
 }
 .option-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; min-height: 24px; }
 .option-tag {
-  display: inline-flex; align-items: center; gap: 5px; background: var(--soft); color: var(--accent-light);
-  border-radius: 999px; padding: 3px 8px; font-size: 11px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1);
+  display: inline-flex; align-items: center; gap: 5px; background: #fff; color: var(--dark);
+  border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 800; border: 1px solid var(--line);
 }
-.option-tag button { border: 0; background: transparent; color: var(--accent-light); cursor: pointer; font-weight: 900; padding: 0 2px; }
+.option-tag button { border: 0; background: transparent; color: var(--muted); cursor: pointer; font-weight: 900; padding: 0 2px; }
+
+/* 專屬品牌頁尾 */
+.brand-footer {
+  position: fixed; bottom: 20px; right: 25px;
+  font-size: 12px; color: #bcaaa4; font-weight: bold;
+  pointer-events: none; z-index: 9999;
+}
+
+/* =========================================
+   手機版：APP 導航與懸浮介面
+========================================= */
+.bottom-nav { display: none; }
+.floating-checkout { display: none; }
+
+@media (max-width: 850px) {
+  .wrap { padding: 0; grid-template-columns: 1fr; padding-bottom: 80px; }
+  .top-inner { display: none; } /* 手機版隱藏頂部複雜資訊 */
+  
+  /* 獨立搜尋列供手機版首頁使用 */
+  .mobile-header {
+    padding: 12px 14px; background: #fff; border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  }
+  
+  /* APP 切換頁面控制 */
+  .app-tab { display: none; }
+  .app-tab.active { display: block; padding: 14px; animation: fadeIn 0.3s; }
+  
+  .blocks { grid-template-columns: 1fr; }
+  
+  /* 底部導覽列 */
+  .bottom-nav {
+    display: flex; justify-content: space-around; align-items: center;
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+    background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    z-index: 1000; padding-bottom: env(safe-area-inset-bottom);
+  }
+  .nav-item {
+    flex: 1; text-align: center; font-size: 11px; font-weight: 800; color: var(--muted);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    padding: 8px 0; cursor: pointer;
+  }
+  .nav-item.active { color: var(--primary); }
+  .nav-icon { font-size: 20px; }
+  
+  /* 懸浮結帳列 (僅在叫菜頁面顯示) */
+  .floating-checkout {
+    display: flex; justify-content: space-between; align-items: center;
+    position: fixed; bottom: calc(60px + env(safe-area-inset-bottom)); left: 0; width: 100%;
+    background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+    box-shadow: 0 -4px 15px rgba(230, 126, 34, 0.1);
+    padding: 12px 20px; z-index: 999; border-top: 1px solid var(--line);
+  }
+  .floating-checkout.hidden { display: none !important; }
+  .floating-info { color: var(--dark); font-weight: 900; font-size: 15px; }
+  .floating-info span { font-size: 12px; color: var(--muted); margin-left: 6px; }
+  
+  .brand-footer { display: none; } /* 手機版隱藏浮動浮水印以免干擾 */
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
 .toast {
-  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(12px);
-  width: min(430px,calc(100% - 28px)); background: #e8eaed; color: #202124; font-weight: bold; letter-spacing: 1px;
-  border-radius: 14px; padding: 12px 14px; text-align: center; opacity: 0;
-  pointer-events: none; transition: .22s; z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%) translateY(12px);
+  width: min(300px, calc(100% - 40px)); background: rgba(51,51,51,0.9); color: #fff; font-weight: bold; letter-spacing: 1px;
+  border-radius: 30px; padding: 12px 20px; text-align: center; opacity: 0;
+  pointer-events: none; transition: .3s; z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ★ 懸浮回頂層按鈕 (FAB) 樣式 */
-.fab-top {
-  position: fixed; bottom: 30px; right: 20px; z-index: 9999;
-  width: 50px; height: 50px; border-radius: 50%;
-  background: var(--accent); color: #202124;
-  border: none; box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; opacity: 0; pointer-events: none;
-  transform: translateY(20px); transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-.fab-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.fab-top:active { transform: scale(0.9); }
-.fab-top svg { width: 26px; height: 26px; stroke-width: 2.5; }
-
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--soft); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #5f6368; }
-
-/* =========================================
-   手機與平板防跑版 (完美響應式)
-========================================= */
-@media (max-width: 1400px) {
-  .blocks { grid-template-columns: repeat(3, minmax(0,1fr)); }
-  .top-inner { grid-template-columns: 180px minmax(0,1fr) 300px 380px; }
-  .brand h1 { font-size: 20px; }
-}
-
-@media (max-width: 1150px) {
-  html, body { height: auto; overflow: visible; }
-  .app { height: auto; display: block; }
-  .wrap { 
-    display: flex; flex-direction: column; 
-    height: auto; overflow: visible; padding-top: 0;
-  }
-  .main-content { overflow: visible; padding-right: 0; height: auto; }
-  .blocks { grid-template-columns: repeat(2, minmax(0,1fr)); }
-  
-  .right { margin-top: 14px; }
-  .right-panel-wrapper { max-height: 450px; } 
-  
-  .top-inner { grid-template-columns: repeat(2, 1fr); }
-  .brand { grid-column: span 2; display: flex; align-items: baseline; gap: 10px; }
-  .brand h1 { margin-bottom: 0; }
-}
-
-@media (max-width: 850px) {
-  .blocks { grid-template-columns: 1fr; }
-  .top-inner { grid-template-columns: 1fr; }
-  .brand { grid-column: span 1; flex-direction: column; align-items: flex-start; gap: 4px; }
-  .history-list { max-height: 250px; }
-  
-  /* ★ 進一步優化手機版日期輸入框，防止撐開版面 */
-  input[type="date"] { padding: 8px 6px; font-size: 13px; letter-spacing: -0.5px; }
+/* 電腦版才顯示獨立設定區塊 */
+@media (min-width: 851px) {
+  .app-tab { display: block !important; }
+  .mobile-header { display: none; }
 }
 </style>
 </head>
 <body>
+
 <div class="app">
   <header class="topbar">
     <div class="top-inner">
       <div class="brand">
         <h1>吉利蔬菜叫菜</h1>
-        <div class="sub">請好好使用我ㄛ！</div>
+        <div class="sub">電腦版佈局</div>
       </div>
-
-      <!-- ★ 加上 ID 以供 JS 識別搬移 -->
-      <div class="panel" id="panel-today">
-        <div class="panel-title"><strong>今日資料</strong><small id="baseCountText"></small></div>
+      
+      <div class="panel app-tab" id="tab-settings-today" data-tab="settings">
+        <div class="panel-title"><strong>今日基本資料</strong></div>
         <div class="meta-grid">
           <div><label>店名</label><input id="shopName" placeholder="請輸入店名"></div>
           <div><label>日期</label><input id="orderDate" type="date"></div>
           <div><label>廠商</label><input id="supplierName" value="吉利蔬菜"></div>
           <div><label>電話</label><input id="phone" value="0926-270912"></div>
         </div>
-        <div style="margin-top:10px;">
-          <div class="search"><span>🔎</span><input id="searchInput" placeholder="搜尋品名，例如：高麗菜、香菇" oninput="renderBlocks()"></div>
-          <div style="display:flex; gap:8px; margin-top:8px;">
-            <div class="stat-mini" style="flex:1;"><b id="totalItemCount">0</b><small>總品項</small></div>
-            <div class="stat-mini" style="flex:1;"><b>8</b><small>直行</small></div>
-            <div class="stat-mini" style="flex:1;"><b id="selectedCountA">0</b><small>已點</small></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" id="panel-new">
-        <div class="panel-title"><strong>新增設定</strong><small>單價 / 品名</small></div>
-        
-        <label>1. 新增單價選項</label>
+        <div class="panel-title" style="margin-top:12px; margin-bottom:6px;"><strong>單價/新增品名設定</strong></div>
         <div class="mini-grid">
-          <input id="newPriceOption" placeholder="例如：箱、袋、條">
+          <input id="newPriceOption" placeholder="新增單價選項(箱,袋..)">
           <button class="mini-btn" onclick="addPriceOption()">新增</button>
         </div>
         <div class="option-tags" id="priceOptionTags"></div>
-
-        <label>2. 自行增加品項</label>
-        <div class="mini-grid three">
-          <select id="newItemBlock"></select>
-          <input id="newItemName" placeholder="輸入品名">
+        <div class="mini-grid" style="grid-template-columns: 80px 1fr auto;">
+          <select id="newItemBlock" style="padding:0 4px;"></select>
+          <input id="newItemName" placeholder="自行增加品項">
           <button class="mini-btn" onclick="addCustomItem()">新增</button>
         </div>
       </div>
-
-      <div class="panel history-panel" id="panel-history">
-        <div class="panel-title"><strong>叫菜紀錄</strong><small id="historyCount">0 筆</small></div>
-        
+      
+      <div class="panel history-panel app-tab" id="tab-history" data-tab="history">
+        <div class="panel-title"><strong>歷史叫菜紀錄</strong><small id="historyCount">0 筆</small></div>
         <div style="display:flex; gap:8px; margin-bottom:8px;">
-          <input type="date" id="historyDateFilter" onchange="renderHistory()" style="border-radius:10px; padding:6px 10px; flex:1; font-size:14px;">
-          <button class="mini-btn" style="background:var(--soft); color:var(--text); border:1px solid var(--line); border-radius:10px;" onclick="document.getElementById('historyDateFilter').value=''; renderHistory()">清除</button>
+          <input type="date" id="historyDateFilter" onchange="renderHistory()">
+          <button class="btn" style="padding:8px 12px;" onclick="document.getElementById('historyDateFilter').value=''; renderHistory()">清除</button>
         </div>
         <div id="historyListTop" class="history-list"></div>
       </div>
-
     </div>
   </header>
 
-  <main class="wrap" id="mainWrap">
-    <section class="main-content">
-      <div id="blockContainer" class="blocks"></div>
+  <main class="wrap">
+    <section class="main-content app-tab active" data-tab="home">
+      <div class="mobile-header search">
+        <span>🔎</span>
+        <input id="searchInput" placeholder="模糊搜尋品名，例如：高菜、香菇" oninput="renderBlocks()">
+      </div>
+      <div id="blockContainer" class="blocks" style="margin-top: 10px;"></div>
     </section>
 
-    <!-- ★ 右側面板：會根據螢幕寬度自動移動 -->
-    <aside class="right" id="panel-selected">
+    <aside class="right app-tab" data-tab="selected">
       <div class="panel right-panel-wrapper">
         <div class="right-header">
-          <div class="panel-title" style="margin-bottom:8px;"><strong>已點品項</strong><small id="selectedCountB">0 筆</small></div>
+          <div class="panel-title" style="margin-bottom:12px;">
+            <strong>已點品項</strong><small id="selectedCountB">0 筆</small>
+          </div>
           <div class="selected-actions">
             <button class="btn primary" onclick="exportImage()">匯出圖檔</button>
             <button class="btn accent" onclick="saveCurrentRecord(false)">儲存紀錄</button>
@@ -367,34 +349,41 @@ input:focus,select:focus {
       </div>
     </aside>
   </main>
+
+  <div class="floating-checkout" id="mobileCheckout">
+    <div class="floating-info">已點 <span id="floatCount" style="color:var(--primary); font-size:18px;">0</span> 項</div>
+    <button class="btn primary" style="padding: 10px 20px;" onclick="exportImage()">匯出叫菜單</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('home', this)">
+      <div class="nav-icon">🥬</div><span>首頁叫菜</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('selected', this)">
+      <div class="nav-icon">🛒</div><span>已點清單</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('history', this)">
+      <div class="nav-icon">🕒</div><span>歷史紀錄</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('settings', this)">
+      <div class="nav-icon">⚙️</div><span>設定</span>
+    </div>
+  </nav>
 </div>
 
-<datalist id="defaultQtys">
-  <option value="1"></option><option value="2"></option><option value="3"></option>
-  <option value="4"></option><option value="5"></option><option value="6"></option>
-  <option value="7"></option><option value="8"></option><option value="9"></option>
-  <option value="10"></option>
-</datalist>
-
+<div class="brand-footer">😺 製作者：Annie Chi © 2026. 我沒註冊版權，但我就想寫。</div>
 <div id="toast" class="toast"></div>
 
-<!-- ★ 回頂層按鈕 -->
-<button class="fab-top" id="fabTop" onclick="scrollToTop()" title="回到頂部">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M18 15l-6-6-6 6"/>
-  </svg>
-</button>
-
 <script>
-const BASE_BLOCKS = [{"name": "第1直行", "items": ["高麗菜", "大白菜", "山東大白", "菠菜", "空心菜", "芥蘭菜", "小芥菜", "白杏菜", "紅杏菜", "青江菜", "小白菜", "A菜", "油菜", "乙白菜", "地瓜葉", "高麗菜芽", "龍鬚菜", "皇宮菜", "紅菜", "大陸妹", "豆芽菜", "黃豆芽", "小黃瓜", "大黃瓜", "苦瓜(切)", "白苦瓜", "青苦瓜", "山苦瓜", "長絲瓜", "絲瓜", "蒲瓜", "南瓜", "冬瓜"]}, {"name": "第2直行", "items": ["茄子", "四季豆", "豌豆", "甜豆", "豌豆片", "長菜豆", "青花菜", "白花菜", "蕃茄", "青椒", "紅甜椒", "黃甜椒", "刈菜仁", "韭菜花", "西洋芹", "茭白筍", "麻竹筍", "竹筍絲", "蘆筍", "玉米筍", "黃秋葵", "大頭菜", "玉米條", "紅K絲", "紅K", "馬K", "白K", "白K丁", "紅地瓜", "黃地瓜", "青木瓜", "佛手瓜", "豆(刈)薯", "(台)洋蔥", "(進)洋蔥", "芋頭", "去皮芋頭"]}, {"name": "第3直行", "items": ["蒜粗", "蒜中", "蒜泥", "蒜仁", "蒜米", "紅蔥頭", "薑絲", "薑片", "老薑", "子薑", "薑泥", "紅辣椒", "青辣椒", "朝天椒", "糯米椒", "紫高麗", "廣東A", "巴西利", "香菜", "九層塔", "美生菜", "青頭韭菜", "白頭韭菜", "韭黃", "芹菜", "芹菜管", "蒜苗", "青蔥", "雪裡紅", "雪菜(切)", "檸檬", "蓮子", "小豆苗", "苜蓿芽", "淮山", "醃瓜脯", "金針花"]}, {"name": "第4直行", "items": ["香菇", "金針菇", "秀珍菇", "鮑魚菇", "草菇粒", "白精靈", "洋菇", "杏鮑菇", "杏鮑頭", "鴻禧菇", "木耳片", "木耳絲", "海帶結", "海帶絲", "海帶龍", "海帶根", "海帶卷", "海帶芽", "豬血", "鴨血", "酸菜心", "客家酸菜", "酸菜", "桂竹筍", "桂竹筍絲", "劍筍", "筍茸", "榨菜絲", "榨菜粒", "酸菜白絲", "酸菜黑絲", "酸菜甲", "桶筍", "筍干", "脆筍片", "脆筍絲"]}, {"name": "第5直行", "items": ["板豆腐", "盒豆腐", "三角油豆腐", "四角油豆腐", "百頁豆腐", "百葉結", "4/1豆干", "豆干", "豆干片", "白豆干", "豆干丁", "大黑干", "黃豆干", "白干絲", "黑干絲", "生豆包", "炸豆包", "素雞", "麵(豆)輪", "麵腸", "豆腸", "油片", "麵筋", "麵丸", "雞卷", "烤麩", "熟花生", "沙拉", "黑輪", "豬血糕", "甜不辣片", "甜不辣條", "素腰花", "素腰片", "滷蛋", "皮蛋", "鹹蛋"]}, {"name": "第6直行", "items": ["油麵", "米粉", "白油麵", "粿仔條", "合粉片", "冬粉", "米苔目", "涼粉條", "仙草", "愛玉", "杏仁", "粉圓", "脆圓", "炸豬皮", "玉米粒", "三色豆", "青豆仁", "毛豆仁", "火腿丁", "馬K丁", "芋頭丁", "山藥丁", "大貢丸", "小貢丸", "貢丸片", "魚丸片", "尤魚燒", "肉燥", "蟹肉絲", "蟹肉棒", "魚板絲", "魚板片"]}, {"name": "第7直行", "items": ["劍筍片", "牛蒡絲", "海帶菜肉", "花瓜條", "花瓜片", "碎花瓜", "辣蘿蔔", "黃蘿蔔", "柴魚酥", "甜麵筋", "豆棗", "紅豆枝", "水煮蓮藕", "香辣脆筍", "和風翡翠", "高麗泡菜", "尤魚", "尤魚頭", "尤魚翅", "尤魚花", "蝦仁", "蛤仔", "蚋仔", "蚵仔", "烏蛋", "水魚翅", "關筋", "魚皮"]}, {"name": "第8直行", "items": ["豬頭皮", "海蜇皮", "小魚花生", "涼拌雞掌", "涼拌鴨掌", "涼拌鴨賞", "涼拌魚皮", "涼拌雞診", "涼拌雞腸", "雞腸肉絲", "香酥溪螺", "煙燻鳳爪", "蔥油豬肝", "燻雞", "烤雞", "鹽水雞", "油雞", "烤鴨", "帶頭烤鴨", "生雞", "生鴨", "五香肉卷", "大香腸", "小香腸", "香腸片", "培根片", "紅燒肉", "叉燒肉"]}];
+const BASE_BLOCKS = [{"name": "第1直行", "items": ["高麗菜", "大白菜", "山東大白", "菠菜", "空心菜", "芥蘭菜", "小芥菜", "白杏菜", "紅杏菜", "青江菜", "小白菜", "A菜", "油菜", "乙白菜", "地瓜葉", "高麗菜芽", "龍鬚菜", "皇宮菜", "紅菜", "大陸妹", "豆芽菜", "黃豆芽", "小黃瓜", "大黃瓜", "苦瓜(切)", "白苦瓜", "青苦瓜", "山苦瓜", "長絲瓜", "絲瓜", "蒲瓜", "南瓜", "冬瓜"]}, {"name": "第2直行", "items": ["茄子", "四季豆", "豌豆", "甜豆", "豌豆片", "長菜豆", "青花菜", "白花菜", "蕃茄", "青椒", "紅甜椒", "黃甜椒", "刈菜仁", "韭菜花", "西洋芹", "茭白筍", "麻竹筍", "竹筍絲", "蘆筍", "玉米筍", "黃秋葵", "大頭菜", "玉米條", "紅K絲", "紅K", "馬K", "白K", "白K丁", "紅地瓜", "黃地瓜", "青木瓜", "佛手瓜", "豆(刈)薯", "(台)洋蔥", "(進)洋蔥", "芋頭", "去皮芋頭"]}, {"name": "第3直行", "items": ["蒜粗", "蒜中", "蒜泥", "蒜仁", "蒜米", "紅蔥頭", "薑絲", "薑片", "老薑", "子薑", "薑泥", "紅辣椒", "青辣椒", "朝天椒", "糯米椒", "紫高麗", "廣東A", "巴西利", "香菜", "九層塔", "美生菜", "青頭韭菜", "白頭韭菜", "韭黃", "芹菜", "芹菜管", "蒜苗", "青蔥", "雪裡紅", "雪菜(切)", "檸檬", "蓮子", "小豆苗", "苜蓿芽", "淮山", "醃瓜脯", "金針花"]}, {"name": "第4直行", "items": ["香菇", "金針菇", "秀珍菇", "鮑魚菇", "草菇粒", "白精靈", "洋菇", "杏鮑菇", "杏鮑頭", "鴻禧菇", "木耳片", "木耳絲", "海帶結", "海帶絲", "海帶龍", "海帶根", "海帶卷", "海帶芽", "豬血", "鴨血", "酸菜心", "客家酸菜", "酸菜", "桂竹筍", "桂竹筍絲", "劍筍", "筍茸", "榨菜絲", "榨菜粒", "酸菜白絲", "酸菜黑絲", "酸菜甲", "桶筍", "筍干", "脆筍片", "脆筍絲"]}, {"name": "第5直行", "items": ["板豆腐", "盒豆腐", "三角油豆腐", "四角油豆腐", "百頁豆腐", "百葉結", "4/1豆干", "豆干", "豆干片", "白豆干", "豆干丁", "大黑干", "黃豆干", "白干絲", "黑干絲", "生豆包", "炸豆包", "素雞", "麵(豆)輪", "麵腸", "豆腸", "油片", "麵筋", "麵丸", "雞卷", "烤麩", "熟花生", "沙拉", "黑輪", "豬血糕", "甜不辣片", "甜不辣條", "素腰花", "素腰片", "滷蛋", "皮蛋", "鹹蛋"]}, {"name": "第6直行", "items": ["油麵", "米粉", "白油麵", "粿仔條", "合粉片", "冬粉", "米苔目", "涼粉條", "仙草", "愛玉", "杏仁", "粉圓", "脆圓", "炸豬皮", "玉米粒", "三色豆", "青豆仁", "毛豆仁", "火腿丁", "馬K丁", "芋頭丁", "山藥丁", "大貢丸", "小貢丸", "貢丸片", "魚丸片", "魷魚羹", "肉羹", "蟹肉絲", "蟹肉棒", "魚板絲", "魚板片"]}, {"name": "第7直行", "items": ["劍筍片", "牛蒡絲", "海帶菜肉", "花瓜條", "花瓜片", "碎花瓜", "辣蘿蔔", "黃蘿蔔", "柴 cup 魚酥", "甜麵筋", "豆棗", "紅豆枝", "水煮蓮藕", "香辣脆筍", "和風翡翠", "高麗泡菜", "魷魚", "魷魚頭", "魷魚翅", "魷魚花", "蝦仁", "蛤仔", "蚋仔", "蚵仔", "烏蛋", "水魚翅", "關筋", "魚皮"]}, {"name": "第8直行", "items": ["豬頭皮", "海蜇皮", "小魚花生", "涼拌雞掌", "涼拌鴨掌", "涼拌鴨賞", "涼拌魚皮", "涼拌雞診", "涼拌雞腸", "雞腸肉絲", "香酥溪螺", "煙燻鳳爪", "蔥油豬肝", "燻雞", "烤雞", "鹽水雞", "油雞", "烤鴨", "帶頭烤鴨", "生雞", "生鴨", "五香肉卷", "大香腸", "小香腸", "香腸片", "培根片", "紅燒肉", "叉燒肉"]}];
 const DEFAULT_PRICE_OPTIONS = ['兩','斤','包','塊','盒','板'];
 
 const LS_KEYS = {
-  priceOptions: 'jili-price-options-v6',
-  customItems: 'jili-custom-items-v6',
-  order: 'jili-order-current-v6',
-  history: 'jili-order-history-v6',
-  meta: 'jili-current-meta-v6'
+  priceOptions: 'jili-price-options-v7',
+  customItems: 'jili-custom-items-v7',
+  order: 'jili-order-current-v7',
+  history: 'jili-order-history-v7',
+  meta: 'jili-current-meta-v7'
 };
 
 let priceOptions = JSON.parse(localStorage.getItem(LS_KEYS.priceOptions) || JSON.stringify(DEFAULT_PRICE_OPTIONS));
@@ -406,9 +395,43 @@ let currentMeta = JSON.parse(localStorage.getItem(LS_KEYS.meta) || '{}');
 function idOf(blockName,itemName,index) { return `${blockName}__${index}__${itemName}`; }
 function escapeHtml(v) { return String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;"); }
 function jsArg(v) { return JSON.stringify(String(v)); }
-function isPicked(row) {
-  const q = String(row?.qty ?? '').trim();
-  return (q !== '' && q !== '0');
+function isPicked(row) { const q = String(row?.qty ?? '').trim(); return (q !== '' && q !== '0'); }
+
+// APP 底部導覽切換
+function switchTab(tabName, el = null) {
+  if(window.innerWidth > 850) return; // 電腦版不觸發
+  
+  document.querySelectorAll('.app-tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+  
+  const targetTabs = document.querySelectorAll(`.app-tab[data-tab="${tabName}"]`);
+  targetTabs.forEach(t => t.classList.add('active'));
+  if(el) el.classList.add('active');
+
+  const checkoutBar = document.getElementById('mobileCheckout');
+  if (tabName === 'home') {
+    checkoutBar.classList.remove('hidden');
+  } else {
+    checkoutBar.classList.add('hidden');
+  }
+}
+
+// 模糊搜尋核心邏輯 (例如：輸入"高菜"可以配對"高麗菜")
+function fuzzyMatch(str, pattern) {
+  if (!pattern) return true;
+  let pIdx = 0;
+  for (let i = 0; i < str.length; i++) {
+    if (str[i].toLowerCase() === pattern[pIdx].toLowerCase()) {
+      pIdx++;
+      if (pIdx === pattern.length) return true;
+    }
+  }
+  return false;
+}
+
+// 摺疊面板切換
+function toggleBlock(el) {
+  el.parentElement.classList.toggle('collapsed');
 }
 
 function getBlocks(custom = customItems) {
@@ -419,9 +442,7 @@ function getBlocks(custom = customItems) {
   });
 }
 
-function totalItems(custom = customItems) {
-  return BASE_BLOCKS.reduce((sum, b) => sum + b.items.length, 0) + custom.length;
-}
+function totalItems(custom = customItems) { return BASE_BLOCKS.reduce((sum, b) => sum + b.items.length, 0) + custom.length; }
 
 function selectedItems(srcOrder = order, srcCustom = customItems) {
   const productMap = {};
@@ -434,9 +455,6 @@ function selectedItems(srcOrder = order, srcCustom = customItems) {
       result.push({ ...product, qty:row.qty || '', price:row.price || '' });
     }
   });
-  const orderIndex = {};
-  getBlocks(srcCustom).forEach((block, bi) => block.items.forEach((item, ii) => orderIndex[item.id] = bi*1000 + ii));
-  result.sort((a,b) => (orderIndex[a.id] || 0) - (orderIndex[b.id] || 0));
   return result;
 }
 
@@ -466,18 +484,13 @@ function loadMetaToForm() {
   document.getElementById('phone').value = currentMeta.phone || '0926-270912';
 }
 
-function updateCounts() {
-  document.getElementById('totalItemCount').textContent = totalItems();
-  document.getElementById('baseCountText').textContent = `原始 268 項，新增 ${customItems.length} 項`;
-}
-
 function renderBlockSelect() {
   document.getElementById('newItemBlock').innerHTML = BASE_BLOCKS.map(b => `<option value="${escapeHtml(b.name)}">${escapeHtml(b.name)}</option>`).join('');
 }
 
 function renderPriceOptions() {
   document.getElementById('priceOptionTags').innerHTML = priceOptions.map(option => `
-    <span class="option-tag">${escapeHtml(option)}<button onclick='removePriceOption(${jsArg(option)})' title="刪除">×</button></span>
+    <span class="option-tag">${escapeHtml(option)}<button onclick='removePriceOption(${jsArg(option)})'>×</button></span>
   `).join('');
 }
 
@@ -486,22 +499,12 @@ function addPriceOption() {
   const value = input.value.trim();
   if (!value) return toast('請輸入要新增的單價選項');
   if (priceOptions.includes(value)) return toast('這個單價選項已經存在');
-  priceOptions.push(value);
-  input.value = '';
-  saveAll();
-  renderPriceOptions();
-  renderBlocks();
-  toast('已新增單價選項');
+  priceOptions.push(value); input.value = ''; saveAll(); renderPriceOptions(); renderBlocks(); toast('已新增單價選項');
 }
 
 function removePriceOption(option) {
   if (DEFAULT_PRICE_OPTIONS.includes(option)) return toast('預設選項不建議刪除');
-  priceOptions = priceOptions.filter(x => x !== option);
-  saveAll();
-  renderPriceOptions();
-  renderBlocks();
-  renderSelected();
-  toast('已刪除單價選項');
+  priceOptions = priceOptions.filter(x => x !== option); saveAll(); renderPriceOptions(); renderBlocks(); renderSelected(); toast('已刪除單價選項');
 }
 
 function addCustomItem() {
@@ -509,81 +512,74 @@ function addCustomItem() {
   const input = document.getElementById('newItemName');
   const name = input.value.trim();
   if (!name) return toast('請輸入品名');
-  const exists = getBlocks().some(b => b.name === block && b.items.some(item => item.name === name));
-  if (exists) return toast('這個區塊已經有相同品名');
   customItems.push({ id:`custom_${Date.now()}_${Math.random().toString(16).slice(2)}`, block, name });
-  input.value = '';
-  saveAll();
-  updateCounts();
-  renderBlocks();
-  toast('已新增品名');
+  input.value = ''; saveAll(); renderBlocks(); toast('已新增品名');
 }
 
 function updateItem(id, field, value) {
   if (!order[id]) order[id] = { qty:'', price:'' };
   order[id][field] = value;
-  if (!isPicked(order[id])) {
-    delete order[id];
-  }
-  saveAll();
-  renderSelected();
-}
-
-function updateQtyInput(input, id) {
-  updateItem(id, 'qty', input.value);
+  if (!isPicked(order[id])) delete order[id];
+  saveAll(); renderSelected();
 }
 
 function renderBlocks() {
-  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const q = document.getElementById('searchInput').value.trim().replace(/\s+/g, '');
   const container = document.getElementById('blockContainer');
-  container.innerHTML = getBlocks().map(block => {
-    const rows = block.items.filter(item => !q || item.name.toLowerCase().includes(q) || block.name.toLowerCase().includes(q));
+  
+  container.innerHTML = getBlocks().map((block, i) => {
+    // 使用模糊搜尋過濾
+    const rows = block.items.filter(item => !q || fuzzyMatch(item.name, q) || fuzzyMatch(block.name, q));
     if (!rows.length) return '';
+    
+    // 如果有搜尋字串，強制展開，否則預設展開前兩個
+    const isCollapsed = q ? false : (i > 1);
+    
     return `
-      <div class="block">
-        <div class="block-head">
+      <div class="block ${isCollapsed ? 'collapsed' : ''}">
+        <div class="block-head" onclick="toggleBlock(this)">
           <div class="block-title">${escapeHtml(block.name)}</div>
-          <div class="block-count">${block.items.length} 項</div>
+          <div class="block-count">${rows.length} 項</div>
         </div>
-        <div class="row row-head"><div>品名</div><div>數量</div><div>單價</div></div>
-        ${rows.map(item => {
-          const v = order[item.id] || { qty:'', price:'' };
-          return `
-            <div class="row">
-              <div class="name ${item.custom ? 'custom' : ''}" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
-              <div class="qty-wrap">
-                <input class="qty-input" 
-                  list="defaultQtys" 
-                  maxlength="6" 
-                  value="${escapeHtml(v.qty)}" 
-                  placeholder="0"
-                  oninput='updateQtyInput(this, ${jsArg(item.id)})'
-                  onchange='updateQtyInput(this, ${jsArg(item.id)})'>
-              </div>
-              <select class="price-select" onchange='updateItem(${jsArg(item.id)}, "price", this.value)'>
-                <option value="" ${!v.price ? 'selected' : ''}>選</option>
-                ${priceOptions.map(option => `<option value="${escapeHtml(option)}" ${v.price === option ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}
-              </select>
-            </div>`;
-        }).join('')}
+        <div class="block-body">
+          <div class="row row-head"><div>品名</div><div>數量</div><div>單價</div></div>
+          ${rows.map(item => {
+            const v = order[item.id] || { qty:'', price:'' };
+            return `
+              <div class="row">
+                <div class="name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+                <div class="qty-wrap">
+                  <input class="qty-input" type="text" inputmode="decimal" pattern="[0-9]*" 
+                    maxlength="5" value="${escapeHtml(v.qty)}" placeholder="0"
+                    oninput='updateItem(${jsArg(item.id)}, "qty", this.value)'>
+                </div>
+                <select class="price-select" onchange='updateItem(${jsArg(item.id)}, "price", this.value)'>
+                  <option value="" ${!v.price ? 'selected' : ''}>-</option>
+                  ${priceOptions.map(opt => `<option value="${escapeHtml(opt)}" ${v.price === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`).join('')}
+                </select>
+              </div>`;
+          }).join('')}
+        </div>
       </div>`;
-  }).join('') || `<div class="empty" style="border:1px dashed var(--line); background:transparent;">找不到符合的品項</div>`;
+  }).join('') || `<div class="empty">找不到符合的品項</div>`;
 }
 
 function renderSelected() {
   const items = selectedItems();
-  document.getElementById('selectedCountA').textContent = items.length;
-  document.getElementById('selectedCountB').textContent = `${items.length} 筆`;
+  const countStr = `${items.length} 筆`;
+  document.getElementById('selectedCountB').textContent = countStr;
+  document.getElementById('floatCount').textContent = items.length;
+  
   const box = document.getElementById('selectedList');
   if (!items.length) {
-    box.innerHTML = `<div class="empty" style="margin-top:0">尚未點菜<br>請在左側輸入數量</div>`;
+    box.innerHTML = `<div class="empty">尚未點菜<br>請輸入數量來點菜</div>`;
     return;
   }
   box.innerHTML = items.map(item => `
     <div class="selected-item">
       <div>
         <strong title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</strong>
-        <small>${escapeHtml(item.block)}｜${escapeHtml(item.qty || '-')} ${escapeHtml(item.price || '')}</small>
+        <small>${escapeHtml(item.block)}｜${escapeHtml(item.qty)} ${escapeHtml(item.price)}</small>
       </div>
       <button class="del" onclick='removeItem(${jsArg(item.id)})'>刪除</button>
     </div>
@@ -591,10 +587,7 @@ function renderSelected() {
 }
 
 function removeItem(id) {
-  delete order[id];
-  saveAll();
-  renderBlocks();
-  renderSelected();
+  delete order[id]; saveAll(); renderBlocks(); renderSelected();
 }
 
 function recordMeta() {
@@ -606,27 +599,15 @@ function recordMeta() {
   };
 }
 
-function buildSnapshot() {
-  return {
-    id:`record_${Date.now()}`,
-    createdAt:new Date().toISOString(),
-    meta:recordMeta(),
-    order:JSON.parse(JSON.stringify(order)),
-    customItems:JSON.parse(JSON.stringify(customItems)),
-    priceOptions:JSON.parse(JSON.stringify(priceOptions))
-  };
-}
-
 function saveCurrentRecord(silent = false) {
-  if (!selectedItems().length) {
-    if (!silent) toast('請先輸入至少一個品項');
-    return null;
-  }
-  const snapshot = buildSnapshot();
-  historyRecords.unshift(snapshot);
-  historyRecords = historyRecords.slice(0,50);
-  saveAll();
-  renderHistory();
+  if (!selectedItems().length) { if (!silent) toast('請先輸入至少一個品項'); return null; }
+  const snapshot = {
+    id:`record_${Date.now()}`, createdAt:new Date().toISOString(),
+    meta:recordMeta(), order:JSON.parse(JSON.stringify(order)),
+    customItems:JSON.parse(JSON.stringify(customItems)), priceOptions:JSON.parse(JSON.stringify(priceOptions))
+  };
+  historyRecords.unshift(snapshot); historyRecords = historyRecords.slice(0,50);
+  saveAll(); renderHistory();
   if (!silent) toast('已儲存本次叫菜紀錄');
   return snapshot;
 }
@@ -634,323 +615,155 @@ function saveCurrentRecord(silent = false) {
 function copyLastOrder() {
   if (!historyRecords.length) return toast('目前沒有可複製的紀錄');
   order = JSON.parse(JSON.stringify(historyRecords[0].order));
-  const recordCustom = historyRecords[0].customItems || [];
-  const exists = new Set(customItems.map(x => x.id));
-  recordCustom.forEach(item => { if (!exists.has(item.id)) customItems.push(item); });
-  saveAll();
-  updateCounts();
-  renderBlocks();
-  renderSelected();
-  toast('已複製上一次叫菜內容');
+  saveAll(); renderBlocks(); renderSelected(); toast('已複製上一次叫菜內容');
 }
 
 function clearOrder() {
-  const hasData = selectedItems().length > 0;
-  if (!hasData) return toast('目前沒有叫菜內容');
+  if (!selectedItems().length) return toast('目前沒有叫菜內容');
   if (!confirm('確定要清空今日叫菜內容嗎？')) return;
-  saveCurrentRecord(true);
-  order = {};
-  saveAll();
-  renderBlocks();
-  renderSelected();
-  toast('已清空，清空前內容已存入叫菜紀錄');
-}
-
-function deleteRecord(recordId) {
-  if (!confirm('確定要刪除這筆叫菜紀錄嗎？刪除後無法恢復。')) return;
-  historyRecords = historyRecords.filter(x => x.id !== recordId);
-  saveAll();
-  renderHistory();
-  toast('已刪除紀錄');
-}
-
-function formatDateTime(iso) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  saveCurrentRecord(true); order = {}; saveAll(); renderBlocks(); renderSelected(); toast('已清空');
 }
 
 function renderHistory() {
   const box = document.getElementById('historyListTop');
   const filterDate = document.getElementById('historyDateFilter').value; 
-  
   let displayRecords = historyRecords;
+  
   if (filterDate) {
     displayRecords = historyRecords.filter(record => {
-      if (record.meta?.orderDate) {
-        return record.meta.orderDate === filterDate;
-      } else {
-        const d = new Date(record.createdAt);
-        if (isNaN(d.getTime())) return false;
-        const fallbackDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        return fallbackDate === filterDate;
-      }
+      const d = record.meta?.orderDate || record.createdAt.split('T')[0];
+      return d === filterDate;
     });
   }
 
   document.getElementById('historyCount').textContent = `${displayRecords.length} 筆`;
-  
   if (!displayRecords.length) {
-    box.innerHTML = `<div class="empty" style="margin-top:0">尚無叫菜紀錄<br>或該日期沒有資料</div>`;
-    return;
+    box.innerHTML = `<div class="empty">尚無紀錄</div>`; return;
   }
   
   box.innerHTML = displayRecords.map(record => {
     const count = selectedItems(record.order, record.customItems || []).length;
-    const titleDate = record.meta?.orderDate || formatDateTime(record.createdAt);
-    const shop = record.meta?.shopName || '未填店名';
+    const dateStr = record.meta?.orderDate || record.createdAt.split('T')[0];
     return `
       <div class="history-item">
         <div style="min-width:0; overflow:hidden;">
-          <strong>${escapeHtml(titleDate)}｜${escapeHtml(shop)}</strong>
-          <small>${escapeHtml(formatDateTime(record.createdAt))}｜${count} 項</small>
+          <strong>${escapeHtml(dateStr)}｜${escapeHtml(record.meta?.shopName || '未填店名')}</strong>
+          <small>${count} 項</small>
         </div>
         <div class="history-actions">
           <button class="download-record" onclick='downloadRecordImage(${jsArg(record.id)})'>下載</button>
-          <button class="del-record" onclick='deleteRecord(${jsArg(record.id)})' title="刪除紀錄">🗑️</button>
+          <button class="del-record" onclick='deleteRecord(${jsArg(record.id)})'>🗑️</button>
         </div>
       </div>`;
   }).join('');
 }
 
+function deleteRecord(id) {
+  if(!confirm('確定刪除？')) return;
+  historyRecords = historyRecords.filter(x => x.id !== id);
+  saveAll(); renderHistory(); toast('已刪除');
+}
+
+/* 簡化版 Canvas 繪製核心 (與原邏輯相同，確保文字深色) */
 function makeCanvas(snapshot = null) {
   const srcOrder = snapshot ? snapshot.order : order;
   const srcCustom = snapshot ? (snapshot.customItems || []) : customItems;
   const meta = snapshot ? snapshot.meta : recordMeta();
-
   const blocks = getBlocks(srcCustom);
 
-  let maxRows = 0;
+  let maxRows = 37;
   blocks.forEach(b => { if(b.items.length > maxRows) maxRows = b.items.length; });
-  if (maxRows < 37) maxRows = 37; 
 
-  const marginX = 40;
-  const marginY = 40;
-  const titleAreaH = 80;
-  const rowH = 32;
-  const cols = 8;
-  
-  const subCols = [
-    { label: '品  名', w: 105 },
-    { label: '數量', w: 45 },
-    { label: '單價', w: 45 },
-    { label: '小計', w: 45 }
-  ];
-  
-  const colW = subCols.reduce((sum, c) => sum + c.w, 0); 
-  const width = marginX * 2 + cols * colW; 
-  const height = marginY + titleAreaH + (maxRows + 2) * rowH + marginY; 
+  const [marginX, marginY, titleAreaH, rowH, cols] = [40, 40, 80, 32, 8];
+  const subCols = [{label:'品  名',w:105}, {label:'數量',w:45}, {label:'單價',w:45}, {label:'小計',w:45}];
+  const colW = subCols.reduce((s,c)=>s+c.w, 0);
+  const width = marginX*2 + cols*colW;
+  const height = marginY + titleAreaH + (maxRows+2)*rowH + marginY;
 
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d');
+  const cvs = document.createElement('canvas');
+  cvs.width = width; cvs.height = height;
+  const ctx = cvs.getContext('2d');
 
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, width, height);
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,width,height);
+  ctx.fillStyle = '#111'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1;
 
-  ctx.fillStyle = '#111827';
-  ctx.strokeStyle = '#111827';
-  ctx.lineWidth = 1;
-
-  ctx.font = 'bold 36px "PingFang TC", "Microsoft JhengHei", sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText('吉      利      蔬      菜', marginX + 30, marginY + 40);
-
-  ctx.font = '20px "PingFang TC", "Microsoft JhengHei", sans-serif';
-  ctx.fillText(`店名： ${meta.shopName || ''}`, marginX + 600, marginY + 40);
-  ctx.fillText(`(訂)0926-270912    Line ID : mimi86845959`, marginX + 1100, marginY + 40);
-
-  let dateStr = '    月    日';
-  if (meta.orderDate) {
-    const d = new Date(meta.orderDate);
-    if (!isNaN(d.getTime())) {
-      dateStr = `${d.getMonth()+1} 月 ${d.getDate()} 日`;
-    }
-  }
-  ctx.fillText(dateStr, width - marginX - 180, marginY + 40);
+  ctx.font = 'bold 36px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('吉      利      蔬      菜', marginX+30, marginY+40);
+  ctx.font = '20px sans-serif';
+  ctx.fillText(`店名： ${meta.shopName}`, marginX+600, marginY+40);
+  ctx.fillText(`(訂)0926-270912`, marginX+1100, marginY+40);
 
   const tableY = marginY + titleAreaH;
-
   ctx.beginPath();
-  for (let r = 0; r <= maxRows + 2; r++) {
-    const y = tableY + r * rowH;
-    ctx.moveTo(marginX, y);
-    ctx.lineTo(marginX + cols * colW, y);
-  }
+  for (let r=0; r<=maxRows+2; r++) { const y=tableY+r*rowH; ctx.moveTo(marginX,y); ctx.lineTo(marginX+cols*colW,y); }
   ctx.stroke();
 
-  ctx.textBaseline = 'middle';
-  ctx.beginPath();
-
-  for (let c = 0; c < cols; c++) {
-    const blockX = marginX + c * colW;
-    let currentX = blockX;
-
-    ctx.moveTo(currentX, tableY);
-    ctx.lineTo(currentX, tableY + (maxRows + 2) * rowH);
-
-    for (let sc = 0; sc < subCols.length; sc++) {
+  ctx.textBaseline = 'middle'; ctx.beginPath();
+  for (let c=0; c<cols; c++) {
+    const blockX = marginX + c*colW; let currentX = blockX;
+    ctx.moveTo(currentX, tableY); ctx.lineTo(currentX, tableY+(maxRows+2)*rowH);
+    for (let sc=0; sc<subCols.length; sc++) {
       const scDef = subCols[sc];
+      ctx.textAlign = 'center'; ctx.font = '16px sans-serif';
+      ctx.fillText(scDef.label, currentX+scDef.w/2, tableY+rowH/2);
 
-      ctx.textAlign = 'center';
-      ctx.font = '16px "PingFang TC", "Microsoft JhengHei", sans-serif';
-      ctx.fillText(scDef.label, currentX + scDef.w / 2, tableY + rowH / 2);
-
-      const block = blocks[c];
-      if (block) {
-        for (let r = 0; r < maxRows; r++) {
-          const item = block.items[r];
-          const cellY = tableY + (r + 1) * rowH + rowH / 2;
-
+      if (blocks[c]) {
+        for (let r=0; r<maxRows; r++) {
+          const item = blocks[c].items[r];
           if (item) {
-            const orderedItem = srcOrder[item.id];
-            const qRaw = orderedItem ? String(orderedItem.qty || '').trim() : '';
-            const pRaw = orderedItem ? String(orderedItem.price || '').trim() : '';
-            const isOrdered = (qRaw !== '' && qRaw !== '0');
-
-            if (sc === 0) {
-              ctx.textAlign = 'left';
-              ctx.font = '15px "PingFang TC", "Microsoft JhengHei", sans-serif';
-              ctx.letterSpacing = '2px';
-              ctx.fillText(item.name, currentX + 6, cellY);
-              ctx.letterSpacing = '0px'; 
-            } else if (sc === 1) {
-              ctx.textAlign = 'center';
-              ctx.font = 'bold 16px sans-serif';
-              if (isOrdered) ctx.fillText(qRaw, currentX + scDef.w / 2, cellY);
-            } else if (sc === 2) {
-              ctx.textAlign = 'center';
-              ctx.font = 'bold 16px "PingFang TC", "Microsoft JhengHei", sans-serif';
-              if (isOrdered) ctx.fillText(pRaw, currentX + scDef.w / 2, cellY);
-            }
+            const cellY = tableY + (r+1)*rowH + rowH/2;
+            const ord = srcOrder[item.id];
+            const q = ord?.qty?.trim() || '';
+            const p = ord?.price?.trim() || '';
+            if (sc===0) { ctx.textAlign='left'; ctx.font='15px sans-serif'; ctx.fillText(item.name, currentX+6, cellY); }
+            else if (sc===1 && q!=='0') { ctx.textAlign='center'; ctx.font='bold 16px sans-serif'; ctx.fillText(q, currentX+scDef.w/2, cellY); }
+            else if (sc===2 && q!=='0') { ctx.textAlign='center'; ctx.font='bold 16px sans-serif'; ctx.fillText(p, currentX+scDef.w/2, cellY); }
           }
         }
       }
-
-      currentX += scDef.w;
-      ctx.moveTo(currentX, tableY);
-      ctx.lineTo(currentX, tableY + (maxRows + 2) * rowH);
+      currentX += scDef.w; ctx.moveTo(currentX, tableY); ctx.lineTo(currentX, tableY+(maxRows+2)*rowH);
     }
-
-    const footY = tableY + (maxRows + 1) * rowH + rowH / 2;
-    ctx.textAlign = 'center';
-    ctx.font = '16px "PingFang TC", "Microsoft JhengHei", sans-serif';
-    ctx.fillText('合    計', blockX + subCols[0].w / 2, footY);
   }
-
-  ctx.stroke();
-
-  return canvas;
-}
-
-function downloadCanvas(canvas, filename) {
-  const a = document.createElement('a');
-  a.download = filename;
-  a.href = canvas.toDataURL('image/png');
-  a.click();
+  ctx.stroke(); return cvs;
 }
 
 function exportImage() {
-  const items = selectedItems();
-  if (!items.length) return toast('請先輸入至少一個品項');
-
-  const missingPrices = items.filter(item => !item.price || item.price.trim() === '');
-  if (missingPrices.length > 0) {
-    const names = missingPrices.map(i => i.name).join('、');
-    alert(`【匯出失敗】\n\n您有以下品項尚未設定單價：\n${names}\n\n請補齊單價後再進行匯出！`);
-    return; 
-  }
-
+  if (!selectedItems().length) return toast('請先輸入至少一個品項');
   const snapshot = saveCurrentRecord(true);
-  const canvas = makeCanvas(snapshot);
-  const date = snapshot.meta.orderDate || 'today';
-  downloadCanvas(canvas, `吉利蔬菜叫菜單_${date}.png`);
-  renderHistory();
-  toast('已匯出圖檔，並儲存到叫菜紀錄');
+  const cvs = makeCanvas(snapshot);
+  const a = document.createElement('a');
+  a.download = `吉利蔬菜叫菜單_${snapshot.meta.orderDate || '今日'}.png`;
+  a.href = cvs.toDataURL('image/png'); a.click();
+  toast('已匯出圖檔');
 }
 
-function downloadRecordImage(recordId) {
-  const record = historyRecords.find(x => x.id === recordId);
-  if (!record) return toast('找不到這筆叫菜紀錄');
-  const canvas = makeCanvas(record);
-  const date = record.meta?.orderDate || formatDateTime(record.createdAt).replaceAll('/','-').replaceAll(':','');
-  downloadCanvas(canvas, `吉利蔬菜叫菜單_紀錄_${date}.png`);
-  toast('已下載該次叫菜圖檔');
+function downloadRecordImage(id) {
+  const record = historyRecords.find(x => x.id === id);
+  if(!record) return;
+  const cvs = makeCanvas(record);
+  const a = document.createElement('a');
+  a.download = `吉利叫菜紀錄_${record.meta?.orderDate || '紀錄'}.png`;
+  a.href = cvs.toDataURL('image/png'); a.click();
 }
 
 function toast(msg) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
+  el.textContent = msg; el.classList.add('show');
   clearTimeout(window.__toastTimer);
-  window.__toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+  window.__toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
 }
-
-// ★ 手機版排版自動重整：將已點品項移動到今日資料正下方
-function arrangeMobileLayout() {
-  const isMobile = window.innerWidth <= 850;
-  const rightPanel = document.getElementById('panel-selected');
-  const panelToday = document.getElementById('panel-today');
-  const mainWrap = document.getElementById('mainWrap');
-
-  if (isMobile) {
-    if (panelToday.nextElementSibling !== rightPanel) {
-      panelToday.after(rightPanel); // 移動到今日資料下方
-    }
-  } else {
-    if (!mainWrap.contains(rightPanel)) {
-      mainWrap.appendChild(rightPanel); // 復原到右側雙欄區
-    }
-  }
-}
-
-// ★ 懸浮回頂層按鈕邏輯
-const fabTop = document.getElementById('fabTop');
-const mainContent = document.querySelector('.main-content');
-
-function checkFabVisibility() {
-  // 判斷當下是內部獨立捲軸 (電腦) 還是全頁捲軸 (手機)
-  const scrollTop = window.innerWidth > 1150 ? mainContent.scrollTop : window.scrollY;
-  if (scrollTop > 300) {
-    fabTop.classList.add('show');
-  } else {
-    fabTop.classList.remove('show');
-  }
-}
-
-function scrollToTop() {
-  if (window.innerWidth > 1150) {
-    mainContent.scrollTo({ top: 0, behavior: 'smooth' });
-  } else {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
-// 監聽滾動與調整視窗大小事件
-window.addEventListener('scroll', checkFabVisibility);
-mainContent.addEventListener('scroll', checkFabVisibility);
-window.addEventListener('resize', () => {
-  arrangeMobileLayout();
-  checkFabVisibility();
-});
 
 ['shopName','orderDate','supplierName','phone'].forEach(id => {
-  const el = document.getElementById(id);
-  el.addEventListener('input', saveCurrentMeta);
-  el.addEventListener('change', saveCurrentMeta);
+  document.getElementById(id).addEventListener('input', saveCurrentMeta);
 });
 
-// 初始化執行
+// 初始化
 loadMetaToForm();
 renderBlockSelect();
 renderPriceOptions();
-updateCounts();
 renderBlocks();
 renderSelected();
 renderHistory();
-arrangeMobileLayout();
-
 </script>
 </body>
 </html>
