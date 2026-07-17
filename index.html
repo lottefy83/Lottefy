@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>叫菜快手 v2.0.0</title>
+<title>叫菜快手 v2.0.1</title>
 <link rel="manifest" href="./manifest.webmanifest" />
 <meta name="theme-color" content="#202124" />
 <link rel="apple-touch-icon" href="./icons/icon-192.png" />
@@ -496,9 +496,254 @@ html {
   }
 }
 
+
+
+/* =========================================
+   v2.0.1：iPhone 動態視窗與安全區完整修正
+   - 覆蓋原本 100vh，避免 Safari 工具列改變時上下遮蔽
+   - 首頁預留「懸浮匯出列＋底部導覽」高度
+   - 設定／歷史頁改為獨立可捲動頁面
+========================================= */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --mobile-nav-height: 64px;
+  --mobile-checkout-height: 68px;
+}
+
+@media (max-width: 850px) {
+  html, body {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .app {
+    height: 100dvh;
+    min-height: 100svh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  @supports not (height: 100dvh) {
+    .app { height: -webkit-fill-available; min-height: -webkit-fill-available; }
+  }
+
+  .wrap {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .app-tab.active {
+    padding: calc(14px + var(--safe-top)) max(14px, var(--safe-right))
+      calc(14px + var(--mobile-nav-height) + var(--safe-bottom)) max(14px, var(--safe-left));
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .main-content.app-tab.active {
+    padding: 0 max(14px, var(--safe-right))
+      calc(14px + var(--mobile-nav-height) + var(--mobile-checkout-height) + var(--safe-bottom))
+      max(14px, var(--safe-left));
+  }
+
+  .mobile-header {
+    top: 0;
+    margin: 0 0 10px;
+    padding: calc(12px + var(--safe-top)) max(14px, var(--safe-right)) 12px max(14px, var(--safe-left));
+  }
+
+  .mobile-header.search span {
+    left: max(28px, calc(var(--safe-left) + 28px));
+    top: 50%;
+  }
+
+  .bottom-nav {
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+    min-height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+    padding: 0 var(--safe-right) var(--safe-bottom) var(--safe-left);
+  }
+
+  .nav-item {
+    min-height: var(--mobile-nav-height);
+    padding: 8px 2px;
+  }
+
+  .floating-checkout {
+    bottom: calc(var(--mobile-nav-height) + var(--safe-bottom));
+    min-height: var(--mobile-checkout-height);
+    padding: 10px max(20px, var(--safe-right)) 10px max(20px, var(--safe-left));
+  }
+
+  .toast {
+    bottom: calc(var(--mobile-nav-height) + var(--safe-bottom) + 16px);
+  }
+
+  body[data-active-tab="home"] .toast {
+    bottom: calc(var(--mobile-nav-height) + var(--mobile-checkout-height) + var(--safe-bottom) + 16px);
+  }
+
+  .right.app-tab.active {
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .right.app-tab.active .right-panel-wrapper {
+    flex: 1;
+    min-height: 0;
+  }
+
+  body[data-active-tab="settings"] .wrap,
+  body[data-active-tab="history"] .wrap {
+    display: none;
+  }
+
+  body[data-active-tab="settings"] .topbar,
+  body[data-active-tab="history"] .topbar {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body[data-active-tab="settings"] .top-inner,
+  body[data-active-tab="history"] .top-inner {
+    height: 100%;
+    min-height: 0;
+  }
+
+  body[data-active-tab="settings"] .topbar .app-tab.active,
+  body[data-active-tab="history"] .topbar .app-tab.active {
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+
+  body[data-active-tab="history"] .history-list {
+    max-height: none;
+  }
+}
+
+/* =========================================
+   v2.0.1：iPhone 圖檔預覽／分享備援
+========================================= */
+.export-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  align-items: center;
+  justify-content: center;
+  padding: calc(12px + var(--safe-top)) calc(12px + var(--safe-right))
+    calc(12px + var(--safe-bottom)) calc(12px + var(--safe-left));
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.export-modal.show { display: flex; }
+
+.export-dialog {
+  width: min(760px, 100%);
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+
+.export-modal-head {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.export-modal-head strong,
+.export-modal-head small { display: block; }
+.export-modal-head small {
+  margin-top: 4px;
+  max-width: 65vw;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.export-close {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--button-bg);
+  color: var(--text-dark);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.export-preview-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+  background: #151515;
+  -webkit-overflow-scrolling: touch;
+}
+
+.export-preview-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 6px;
+  touch-action: pinch-zoom;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: default;
+}
+
+.export-help {
+  flex-shrink: 0;
+  padding: 10px 14px 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.export-modal-actions {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px 14px 14px;
+}
+
+@media (max-width: 480px) {
+  .export-modal { align-items: stretch; }
+  .export-dialog { width: 100%; max-height: 100%; border-radius: 14px; }
+  .export-modal-actions { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
-<body>
+<body data-active-tab="home">
 
 <div class="app">
   <header class="topbar">
@@ -588,6 +833,27 @@ html {
   </nav>
 </div>
 
+
+<div id="exportModal" class="export-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="exportModalTitle" onclick="if(event.target === this) closeExportPreview()">
+  <div class="export-dialog">
+    <div class="export-modal-head">
+      <div>
+        <strong id="exportModalTitle">圖檔已產生</strong>
+        <small id="exportPreviewName"></small>
+      </div>
+      <button class="export-close" type="button" aria-label="關閉" onclick="closeExportPreview()">×</button>
+    </div>
+    <div class="export-preview-wrap">
+      <img id="exportPreviewImage" class="export-preview-image" alt="叫菜單預覽">
+    </div>
+    <div class="export-help">iPhone 建議點「分享／儲存」，再選擇「儲存影像」；也可以點開原圖後長按儲存。</div>
+    <div class="export-modal-actions">
+      <button class="btn primary" type="button" onclick="sharePreviewImage()">分享／儲存</button>
+      <button class="btn" type="button" onclick="downloadPreviewImage()">開啟原圖</button>
+    </div>
+  </div>
+</div>
+
 <div class="brand-footer">😺 製作者：Annie Chi © 2026. 我沒註冊版權，但我就想寫。</div>
 <div id="toast" class="toast"></div>
 
@@ -617,12 +883,16 @@ function isPicked(row) { const q = String(row?.qty ?? '').trim(); return (q !== 
 // APP 底部導覽切換
 function switchTab(tabName, el = null) {
   if(window.innerWidth > 850) return; // 電腦版不觸發
-  
+
+  document.body.dataset.activeTab = tabName;
   document.querySelectorAll('.app-tab').forEach(tab => tab.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-  
+
   const targetTabs = document.querySelectorAll(`.app-tab[data-tab="${tabName}"]`);
-  targetTabs.forEach(t => t.classList.add('active'));
+  targetTabs.forEach(t => {
+    t.classList.add('active');
+    t.scrollTop = 0;
+  });
   if(el) el.classList.add('active');
 
   const checkoutBar = document.getElementById('mobileCheckout');
@@ -830,16 +1100,33 @@ function recordMeta() {
   };
 }
 
+function createOrderSnapshot() {
+  return {
+    id:`record_${Date.now()}`,
+    createdAt:new Date().toISOString(),
+    meta:recordMeta(),
+    order:JSON.parse(JSON.stringify(order)),
+    customItems:JSON.parse(JSON.stringify(customItems)),
+    priceOptions:JSON.parse(JSON.stringify(priceOptions))
+  };
+}
+
 function saveCurrentRecord(silent = false) {
   if (!selectedItems().length) { if (!silent) toast('請先輸入至少一個品項'); return null; }
-  const snapshot = {
-    id:`record_${Date.now()}`, createdAt:new Date().toISOString(),
-    meta:recordMeta(), order:JSON.parse(JSON.stringify(order)),
-    customItems:JSON.parse(JSON.stringify(customItems)), priceOptions:JSON.parse(JSON.stringify(priceOptions))
-  };
-  historyRecords.unshift(snapshot); historyRecords = historyRecords.slice(0,50);
-  saveAll(); renderHistory();
-  if (!silent) toast('已儲存本次叫菜紀錄');
+  const snapshot = createOrderSnapshot();
+  historyRecords.unshift(snapshot);
+  historyRecords = historyRecords.slice(0,50);
+
+  let saved = true;
+  try {
+    saveAll();
+  } catch (error) {
+    saved = false;
+    console.error('儲存紀錄失敗：', error);
+  }
+  renderHistory();
+
+  if (!silent) toast(saved ? '已儲存本次叫菜紀錄' : '紀錄暫存失敗，請檢查瀏覽器儲存空間');
   return snapshot;
 }
 
@@ -914,6 +1201,7 @@ function makeCanvas(snapshot = null) {
   const cvs = document.createElement('canvas');
   cvs.width = width; cvs.height = height;
   const ctx = cvs.getContext('2d');
+  if (!ctx) throw new Error('瀏覽器無法建立 Canvas 繪圖環境');
 
   ctx.fillStyle = '#fff'; ctx.fillRect(0,0,width,height);
   ctx.fillStyle = '#111'; ctx.strokeStyle = '#111'; ctx.lineWidth = 1;
@@ -967,23 +1255,175 @@ function makeCanvas(snapshot = null) {
   ctx.stroke(); return cvs;
 }
 
-function exportImage() {
-  if (!selectedItems().length) return toast('請先輸入至少一個品項');
-  const snapshot = saveCurrentRecord(true);
-  const cvs = makeCanvas(snapshot);
-  const a = document.createElement('a');
-  a.download = `吉利蔬菜叫菜單_${snapshot.meta.orderDate || '今日'}.png`;
-  a.href = cvs.toDataURL('image/png'); a.click();
-  toast('已匯出圖檔');
+let exportBusy = false;
+let exportPreviewUrl = '';
+let exportPreviewFile = null;
+let exportPreviewName = '';
+
+function isIOSDevice() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 }
 
-function downloadRecordImage(id) {
-  const record = historyRecords.find(x => x.id === id);
-  if(!record) return;
-  const cvs = makeCanvas(record);
+function safeFileName(name) {
+  return String(name || '叫菜單.png').replace(/[\\/:*?"<>|]+/g, '_');
+}
+
+function dataUrlToBlob(dataUrl) {
+  const parts = dataUrl.split(',');
+  const mime = (parts[0].match(/:(.*?);/) || [,'image/png'])[1];
+  const binary = atob(parts[1]);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+
+function canvasToBlobSafe(canvas) {
+  return new Promise((resolve, reject) => {
+    if (typeof canvas.toBlob === 'function') {
+      canvas.toBlob(blob => {
+        if (blob) return resolve(blob);
+        try {
+          resolve(dataUrlToBlob(canvas.toDataURL('image/png')));
+        } catch (error) {
+          reject(error);
+        }
+      }, 'image/png');
+      return;
+    }
+
+    try {
+      resolve(dataUrlToBlob(canvas.toDataURL('image/png')));
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+function triggerBlobDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.download = `吉利叫菜紀錄_${record.meta?.orderDate || '紀錄'}.png`;
-  a.href = cvs.toDataURL('image/png'); a.click();
+  a.href = url;
+  a.download = filename;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
+
+function showExportPreview(blob, filename) {
+  if (exportPreviewUrl) URL.revokeObjectURL(exportPreviewUrl);
+  exportPreviewUrl = URL.createObjectURL(blob);
+  exportPreviewName = filename;
+  exportPreviewFile = typeof File === 'function'
+    ? new File([blob], filename, { type: 'image/png', lastModified: Date.now() })
+    : null;
+
+  const image = document.getElementById('exportPreviewImage');
+  image.src = exportPreviewUrl;
+  image.alt = filename;
+  document.getElementById('exportPreviewName').textContent = filename;
+  document.getElementById('exportModal').classList.add('show');
+  document.getElementById('exportModal').setAttribute('aria-hidden', 'false');
+}
+
+function closeExportPreview() {
+  const modal = document.getElementById('exportModal');
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden', 'true');
+  document.getElementById('exportPreviewImage').removeAttribute('src');
+  if (exportPreviewUrl) URL.revokeObjectURL(exportPreviewUrl);
+  exportPreviewUrl = '';
+  exportPreviewFile = null;
+  exportPreviewName = '';
+}
+
+async function sharePreviewImage() {
+  if (!exportPreviewUrl) return;
+
+  try {
+    if (exportPreviewFile && navigator.share &&
+        (!navigator.canShare || navigator.canShare({ files: [exportPreviewFile] }))) {
+      await navigator.share({
+        files: [exportPreviewFile],
+        title: exportPreviewName,
+        text: '吉利蔬菜叫菜單'
+      });
+      return;
+    }
+  } catch (error) {
+    if (error?.name === 'AbortError') return;
+    console.warn('分享圖檔失敗，改用下載備援：', error);
+  }
+
+  downloadPreviewImage();
+}
+
+function downloadPreviewImage() {
+  if (!exportPreviewUrl) return;
+
+  if (isIOSDevice()) {
+    const opened = window.open(exportPreviewUrl, '_blank', 'noopener');
+    if (!opened) window.location.href = exportPreviewUrl;
+    toast('圖片已開啟，請長按圖片儲存');
+    return;
+  }
+
+  const a = document.createElement('a');
+  a.href = exportPreviewUrl;
+  a.download = exportPreviewName || '叫菜單.png';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+async function exportSnapshotImage(snapshot, filename, successMessage) {
+  if (exportBusy) return toast('圖檔正在產生，請勿重複點擊');
+  exportBusy = true;
+
+  try {
+    if (document.fonts?.ready) await document.fonts.ready;
+    const canvas = makeCanvas(snapshot);
+    const blob = await canvasToBlobSafe(canvas);
+    const finalName = safeFileName(filename);
+
+    // iPhone Safari／加入主畫面的 PWA 對 download 屬性支援不穩定，
+    // 改為顯示預覽，讓使用者透過分享選單儲存，並保留長按圖片備援。
+    if (isIOSDevice()) {
+      showExportPreview(blob, finalName);
+      toast('圖檔已產生，請點「分享／儲存」');
+    } else {
+      triggerBlobDownload(blob, finalName);
+      toast(successMessage);
+    }
+  } catch (error) {
+    console.error('匯出圖檔失敗：', error);
+    toast('匯出失敗，請重新整理頁面後再試');
+  } finally {
+    exportBusy = false;
+  }
+}
+
+async function exportImage() {
+  if (!selectedItems().length) return toast('請先輸入至少一個品項');
+  const snapshot = saveCurrentRecord(true) || createOrderSnapshot();
+  await exportSnapshotImage(
+    snapshot,
+    `吉利蔬菜叫菜單_${snapshot.meta.orderDate || '今日'}.png`,
+    '已匯出圖檔'
+  );
+}
+
+async function downloadRecordImage(id) {
+  const record = historyRecords.find(x => x.id === id);
+  if(!record) return toast('找不到這筆歷史紀錄');
+  await exportSnapshotImage(
+    record,
+    `吉利叫菜紀錄_${record.meta?.orderDate || '紀錄'}.png`,
+    '已匯出歷史紀錄'
+  );
 }
 
 function toast(msg) {
@@ -1009,7 +1449,7 @@ renderHistory();
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => reg.update()).catch(() => {});
   });
 }
 </script>
